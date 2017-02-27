@@ -20,7 +20,7 @@ public class Render extends JPanel {
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        FlappyMario.flappyBird.repaint(g);
+        FlappyMario.flappyMario.repaint(g);
     }
     
 }

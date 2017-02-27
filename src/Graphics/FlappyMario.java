@@ -26,7 +26,7 @@ import javax.swing.Timer;
  */
 public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
-    public static FlappyMario flappyBird;
+    public static FlappyMario flappyMario;
     public final int WIDTH = 800, HEIGHT = 800;
     public Render renderer;
     public Rectangle mario;
@@ -122,7 +122,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        int speed = 10;
+        int speed = 6;
 
         ticks++;
 
@@ -186,13 +186,12 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
                     }
                 }
             }
-
+            
+            // Validaciones
             if (mario.y > HEIGHT - 120 || mario.y < 0)
             {
                 gameOver = true;
-            }
-
-            // Validaciones
+            }            
             if (mario.y + yMotion >= HEIGHT - 120)
             {
                 mario.y = HEIGHT - 120 - mario.height;
@@ -237,7 +236,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
 
         if (!gameOver && started)
         {
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+            g.drawString(String.valueOf(score/3), WIDTH / 2 - 25, 100);
         }
     }    
     

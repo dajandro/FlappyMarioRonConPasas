@@ -18,7 +18,7 @@ public class Game {
      */
     public static void main(String[] args) {
         FlappyMario flappyMario = null;
-        flappyMario.flappyBird = new FlappyMario();
+        flappyMario.flappyMario = new FlappyMario();
     }
     
 }
