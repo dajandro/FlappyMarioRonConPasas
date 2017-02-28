@@ -27,18 +27,23 @@ import javax.swing.Timer;
 public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
     public static FlappyMario flappyMario;
-    public final int WIDTH = 800, HEIGHT = 800;
+    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 200, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
     public Render renderer;
     public Rectangle mario;
     public ArrayList<Rectangle> columns;
     public int ticks, yMotion, score;
-    public boolean gameOver, started;
+    public boolean loose, started, gameover;
     public Random rand;
+    private Timer timer;
+    private Chronometer chrono;
     
     public FlappyMario()
     {
         JFrame jframe = new JFrame();
-        Timer timer = new Timer(20, this);
+        timer = new Timer(20, this);
+        chrono = new Chronometer();
+        chrono.setMinutes(PLAY_TIME_M);
+        chrono.setSeconds(PLAY_TIME_S);
 
         renderer = new Render();
         rand = new Random();
@@ -52,7 +57,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         jframe.setResizable(false);
         jframe.setVisible(true);
 
-        mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+        mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
         columns = new ArrayList<Rectangle>();
 
         addColumn(true);
@@ -60,23 +65,23 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         addColumn(true);
         addColumn(true);
 
-        timer.start();
-    }
+        timer.start();        
+    }   
     
     public void addColumn(boolean start)
     {
-        int space = 300;
+        int space = 250 + PROGRESSBAR_HEIGHT;
         int width = 100;
         int height = 50 + rand.nextInt(300);
 
         if (start)
         {
-            columns.add(new Rectangle(WIDTH + width + columns.size() * 300, HEIGHT - height - 120, width, height));
+            columns.add(new Rectangle(WIDTH + width + columns.size() * 300, HEIGHT - height - 120 - PROGRESSBAR_HEIGHT, width, height));
             columns.add(new Rectangle(WIDTH + width + (columns.size() - 1) * 300, 0, width, HEIGHT - height - space));
         }
         else
         {
-            columns.add(new Rectangle(columns.get(columns.size() - 1).x + 600, HEIGHT - height - 120, width, height));
+            columns.add(new Rectangle(columns.get(columns.size() - 1).x + 600, HEIGHT - height - 120 - PROGRESSBAR_HEIGHT, width, height));
             columns.add(new Rectangle(columns.get(columns.size() - 1).x, 0, width, HEIGHT - height - space));
         }
     }
@@ -89,32 +94,32 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
     public void jump()
     {
-        if (gameOver)
+        if (loose)
         {
-            mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+            mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
             columns.clear();
             yMotion = 0;
-            score = 0;
+            score = 0;           
 
             addColumn(true);
             addColumn(true);
             addColumn(true);
             addColumn(true);
 
-            gameOver = false;
+            loose = false;
         }
 
-        if (!started)
+        if (gameover)
+            chrono.stop();
+        else if (!started)
         {
             started = true;
+            chrono.start();
         }
-        else if (!gameOver)
+        else if (!loose)
         {
             if (yMotion > 0)
-            {
                 yMotion = 0;
-            }
-
             yMotion -= 10;
         }
     }
@@ -137,9 +142,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
 
             // Hacer que caiga
             if (ticks % 2 == 0 && yMotion < 15)
-            {
                 yMotion += 2;
-            }
 
             // Quitar pipes que ya no esten dentro del rango de pantalla
             for (int i = 0; i < columns.size(); i++)
@@ -149,9 +152,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
                 {
                     columns.remove(column);
                     if (column.y == 0)
-                    {
                         addColumn(false);
-                    }
                 }
             }
 
@@ -162,81 +163,99 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             for (Rectangle column : columns)
             {
                 if (column.y == 0 && mario.x + mario.width / 2 > column.x + column.width / 2 - 10 && mario.x + mario.width / 2 < column.x + column.width / 2 + 10)
-                {
                     score++;
-                }
                 if (column.intersects(mario))
                 {
-                    gameOver = true;
+                    loose = true;
                     if (mario.x <= column.x)
-                    {
                         mario.x = column.x - mario.width;
-
-                    }
                     else
                     {
                         if (column.y != 0)
-                        {
                             mario.y = column.y - mario.height;
-                        }
                         else if (mario.y < column.height)
-                        {
                             mario.y = column.height;
-                        }
                     }
                 }
             }
             
             // Validaciones
-            if (mario.y > HEIGHT - 120 || mario.y < 0)
+            if (mario.y > HEIGHT - 120 - PROGRESSBAR_HEIGHT || mario.y < 0)
+                loose = true;
+            if (mario.y + yMotion >= HEIGHT - 120 - PROGRESSBAR_HEIGHT)
             {
-                gameOver = true;
-            }            
-            if (mario.y + yMotion >= HEIGHT - 120)
-            {
-                mario.y = HEIGHT - 120 - mario.height;
-                gameOver = true;
+                mario.y = HEIGHT - 120 - PROGRESSBAR_HEIGHT - mario.height;
+                loose = true;
             }
+            if ( (score / 3) == MAX_SCORE)
+                gameover = true;
+            if (chrono.isFinish())
+                gameover = true;
         }
 
         renderer.repaint();
     }
     
     public void repaint(Graphics g)
-    {
+    {   
+        // Sky area de juego
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
+        
+        // Progress Bar background
+        g.setColor(Color.gray);
+        g.fillRect(0, HEIGHT - PROGRESSBAR_HEIGHT, WIDTH, PROGRESSBAR_HEIGHT);
 
+        // Ground area de juego
         g.setColor(Color.orange);
-        g.fillRect(0, HEIGHT - 120, WIDTH, 120);
+        g.fillRect(0, HEIGHT - 120 - PROGRESSBAR_HEIGHT, WIDTH, 120);
 
+        // Grass area de juego
         g.setColor(Color.green);
-        g.fillRect(0, HEIGHT - 120, WIDTH, 20);
+        g.fillRect(0, HEIGHT - 120 - PROGRESSBAR_HEIGHT, WIDTH, 20);
 
+        // Mario
         g.setColor(Color.red);
         g.fillRect(mario.x, mario.y, mario.width, mario.height);
+        
+        // Progress bar
+        g.setColor(Color.black);
+        g.fillRect(0, HEIGHT - PROGRESSBAR_HEIGHT + 20, WIDTH, 15);
 
         for (Rectangle column : columns)
-        {
             paintColumn(g, column);
-        }
 
         g.setColor(Color.white);
+        g.setFont(new Font("Arial", 1, 40));
+        
+        // Chronometer
+        g.drawString(chrono.toString(), 30, 50);
+        
         g.setFont(new Font("Arial", 1, 100));
 
         if (!started)
-        {   
-            g.drawString("Click to start!", 75, HEIGHT / 2 - 50);
+            g.drawString("Click to start!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
+        
+        if (gameover)
+        {
+            g.drawString("Game over!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
+            timer.stop();
         }
 
-        if (gameOver)
+        if (loose && !gameover)
         {
-            g.drawString("Game Over!", 100, HEIGHT / 2 - 50);
+            g.drawString("Ouch!", 250, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
+            g.drawString("Click to restart", 30, HEIGHT / 2 + 50 - PROGRESSBAR_HEIGHT);            
         }
 
-        if (!gameOver && started)
+        if (!gameover && !loose && started)
         {
+            // Sccore
             g.drawString(String.valueOf(score/3), WIDTH / 2 - 25, 100);
+            // Progress bar
+            g.setColor(Color.red);
+            int x_pb = ((WIDTH - 10) / MAX_SCORE);
+            g.fillRect((score/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 18, mario.width, mario.height);
         }
     }    
     
