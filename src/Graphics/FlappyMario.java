@@ -27,7 +27,7 @@ import javax.swing.Timer;
 public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
     public static FlappyMario flappyMario;
-    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 200, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
+    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
     public Render renderer;
     public Rectangle mario;
     public ArrayList<Rectangle> columns;
@@ -220,7 +220,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         
         // Progress bar
         g.setColor(Color.black);
-        g.fillRect(0, HEIGHT - PROGRESSBAR_HEIGHT + 20, WIDTH, 15);
+        g.fillRect(0, HEIGHT - PROGRESSBAR_HEIGHT + 25, WIDTH, 15);
 
         for (Rectangle column : columns)
             paintColumn(g, column);
@@ -255,7 +255,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             // Progress bar
             g.setColor(Color.red);
             int x_pb = ((WIDTH - 10) / MAX_SCORE);
-            g.fillRect((score/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 18, mario.width, mario.height);
+            g.fillRect((score/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 22, mario.width, mario.height);
         }
     }    
     
