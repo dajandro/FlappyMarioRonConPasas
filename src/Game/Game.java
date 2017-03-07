@@ -6,6 +6,7 @@
 package Game;
 
 import Graphics.FlappyMario;
+import Network.Communicator;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,6 +14,8 @@ import javax.swing.JOptionPane;
  * @author DanielAlejandro
  */
 public class Game {
+    
+    private static final String separator = "~";
 
     /**
      * @param args the command line arguments
@@ -23,6 +26,14 @@ public class Game {
         while(username == null || username.isEmpty())
             username = JOptionPane.showInputDialog(null, "Please enter your ussername: ","Flappy Mario Ron con Pasas", JOptionPane.INFORMATION_MESSAGE);
         
+        Communicator comms = new Communicator();
+        comms.initiateCommunication();
+        // Mensaje de inicio
+        String join = "000"+separator+username;
+        comms.sendMessage(join);
+        System.out.println("C: "+join);
+        String response = comms.readResponse();
+        System.out.println("S: "+response);
         FlappyMario flappyMario = null;
         flappyMario.flappyMario = new FlappyMario();
     }
