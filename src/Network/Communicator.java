@@ -26,7 +26,7 @@ public class Communicator {
     PrintWriter _out;
 
     public Communicator() {
-        serverConnection = new ServerConnection("localhost", 5555);        
+        serverConnection = new ServerConnection("172.20.5.148", 5555);        
     }
     
     public void initiateCommunication(){
