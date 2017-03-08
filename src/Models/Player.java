@@ -5,6 +5,8 @@
  */
 package Models;
 
+import java.awt.Color;
+
 /**
  *
  * @author Diego Jacobs
@@ -15,6 +17,7 @@ public class Player {
     private int X;
     private int Y;
     private int Score;
+    private Color color;
     
     public Player(){
         
@@ -23,6 +26,12 @@ public class Player {
     public Player(int MatchId, int PlayerId) {
         this.MatchId = MatchId;
         this.PlayerId = PlayerId;
+    }
+
+    public Player(int MatchId, int PlayerId, Color color) {
+        this.MatchId = MatchId;
+        this.PlayerId = PlayerId;
+        this.color = color;
     }
     
     public Player(int MatchId, int PlayerId, int X, int Y) {
@@ -84,5 +93,13 @@ public class Player {
 
     public void setScore(int Score) {
         this.Score = Score;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }
