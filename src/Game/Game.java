@@ -6,6 +6,7 @@
 package Game;
 
 import Graphics.FlappyMario;
+import Models.Player;
 import Network.Communicator;
 import javax.swing.JOptionPane;
 
@@ -28,14 +29,19 @@ public class Game {
         
         Communicator comms = new Communicator();
         comms.initiateCommunication();
+        
         // Mensaje de inicio
         String join = "000"+separator+username;
         comms.sendMessage(join);
         System.out.println("C: "+join);
         String response = comms.readResponse();
         System.out.println("S: "+response);
+        
+        //Player with MatchId and PlayerId
+        Player player = new Player(0, 0);
+        
         FlappyMario flappyMario = null;
-        flappyMario.flappyMario = new FlappyMario();
+        flappyMario.flappyMario = new FlappyMario(player);
     }
     
 }
