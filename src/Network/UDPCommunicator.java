@@ -27,6 +27,9 @@ public class UDPCommunicator {
     public UDPCommunicator(){
         this.serverUDPConnection = new ServerUDPConnection("127.0.0.1", 9876);
         this.size = 1024;
+        this.sendData = new byte[1024];
+        this.receiveData = new byte[1024];
+        
     }
     
     public void initiateCommunication(){
