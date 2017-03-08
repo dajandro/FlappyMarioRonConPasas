@@ -7,6 +7,9 @@ package Game;
 
 import Graphics.FlappyMario;
 import Network.Communicator;
+import Network.RequestParser;
+import java.awt.Color;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,14 +17,12 @@ import javax.swing.JOptionPane;
  * @author DanielAlejandro
  */
 public class Game {
-    
-    private static final String separator = "~";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+        String separator = "~";
         String username = "";
         while(username == null || username.isEmpty())
             username = JOptionPane.showInputDialog(null, "Please enter your ussername: ","Flappy Mario Ron con Pasas", JOptionPane.INFORMATION_MESSAGE);
@@ -34,8 +35,9 @@ public class Game {
         System.out.println("C: "+join);
         String response = comms.readResponse();
         System.out.println("S: "+response);
+        RequestParser requestParser = new RequestParser(separator);
         FlappyMario flappyMario = null;
-        flappyMario.flappyMario = new FlappyMario();
+        flappyMario.flappyMario = new FlappyMario(requestParser.getColor(response));
     }
     
 }

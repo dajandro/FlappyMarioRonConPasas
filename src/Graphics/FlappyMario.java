@@ -30,6 +30,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
     public Render renderer;
     public Rectangle mario;
+    public Color marioColor;
     public ArrayList<Rectangle> columns;
     public int ticks, yMotion, score;
     public boolean loose, started, gameover;
@@ -37,7 +38,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     private Timer timer;
     private Chronometer chrono;
     
-    public FlappyMario()
+    public FlappyMario(Color color)
     {
         JFrame jframe = new JFrame();
         timer = new Timer(20, this);
@@ -57,6 +58,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         jframe.setResizable(false);
         jframe.setVisible(true);
 
+        marioColor = color;
         mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
         columns = new ArrayList<Rectangle>();
 
@@ -215,7 +217,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         g.fillRect(0, HEIGHT - 120 - PROGRESSBAR_HEIGHT, WIDTH, 20);
 
         // Mario
-        g.setColor(Color.red);
+        g.setColor(marioColor);
         g.fillRect(mario.x, mario.y, mario.width, mario.height);
         
         // Progress bar
