@@ -5,6 +5,9 @@
  */
 package Graphics;
 
+import Models.Player;
+import Network.SendRequest;
+import Types.Request;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -37,15 +40,23 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     public Random rand;
     private Timer timer;
     private Chronometer chrono;
+    private int HighScore;
+    private int x;
+    private int previousx;
+    private Player player;
     
-    public FlappyMario(Color color)
+
+    public FlappyMario(Player player)
     {
+        this.player = player;
         JFrame jframe = new JFrame();
         timer = new Timer(20, this);
         chrono = new Chronometer();
         chrono.setMinutes(PLAY_TIME_M);
         chrono.setSeconds(PLAY_TIME_S);
-
+        HighScore = 0;
+        x = 0;
+        previousx = 0;
         renderer = new Render();
         rand = new Random();
 
@@ -58,7 +69,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         jframe.setResizable(false);
         jframe.setVisible(true);
 
-        marioColor = color;
+        marioColor = player.getColor();
         mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
         columns = new ArrayList<Rectangle>();
 
@@ -160,7 +171,8 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
 
             // Aumentar posicion y de mario
             mario.y += yMotion;
-
+            this.x += speed;
+            
             // Score
             for (Rectangle column : columns)
             {
@@ -194,7 +206,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             if (chrono.isFinish())
                 gameover = true;
         }
-
+        
         renderer.repaint();
     }
     
@@ -233,6 +245,12 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         // Chronometer
         g.drawString(chrono.toString(), 30, 50);
         
+        //HighScore
+        g.drawString("HighScore: " + this.HighScore , 500, 50);
+        
+        //HighScore
+        g.drawString("X: " + this.x , 100, 50);
+        
         g.setFont(new Font("Arial", 1, 100));
 
         if (!started)
@@ -240,12 +258,25 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         
         if (gameover)
         {
+            if(this.HighScore < this.score / 3)
+                this.HighScore = this.score / 3;
+            
             g.drawString("Game over!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
             timer.stop();
+            
+            this.player.setScore(this.HighScore);
+            SendRequest sedRequest = new SendRequest(Request.END, this.player);
+            Thread th = new Thread(sedRequest);
+            th.start();
         }
 
         if (loose && !gameover)
         {
+            if(this.HighScore < this.score / 3)
+                this.HighScore = this.score / 3;
+            
+            this.x = 0;
+            
             g.drawString("Ouch!", 250, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
             g.drawString("Click to restart", 30, HEIGHT / 2 + 50 - PROGRESSBAR_HEIGHT);            
         }

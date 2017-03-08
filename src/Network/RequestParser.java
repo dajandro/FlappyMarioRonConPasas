@@ -34,6 +34,24 @@ public class RequestParser {
         return null;
     }
     
+    public int getPlayerId(String request){
+        if (request.startsWith("001")){
+            String[] package_parts = request.split(this.separator);
+            return Integer.parseInt(package_parts[2]);
+        }
+        
+        return 0;
+    }
+    
+    public int getMatchId(String request){
+        if (request.startsWith("001")){
+            String[] package_parts = request.split(this.separator);
+            return Integer.parseInt(package_parts[1]);
+        }
+        
+        return 0;
+    }
+    
     public String parse(String request){
         return "";
     }
