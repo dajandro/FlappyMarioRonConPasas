@@ -21,18 +21,16 @@ public class Communicator {
     private ServerConnection serverConnection;
     private DataOutputStream out;
     private DataInputStream in;
-    private int size = 100000;
+    private int size = 1000;
     BufferedReader _in;
     PrintWriter _out;
 
     public Communicator() {
-        serverConnection = new ServerConnection("localhost", 5555);        
+        serverConnection = new ServerConnection("172.20.2.149", 5555);        
     }
     
     public void initiateCommunication(){
         serverConnection.setClient();
-        in = new DataInputStream(serverConnection.getInputStream());
-        out = new DataOutputStream((serverConnection.getOutputStream()));
     }
     
     public void closeCommunication(){
@@ -41,7 +39,8 @@ public class Communicator {
     
     public void sendMessage(String message){
         try {
-            out.writeInt(message.length());
+            out = new DataOutputStream((serverConnection.getOutputStream()));
+            //out.writeInt(message.length());
             out.write(message.getBytes());        
             out.flush();
         } catch (IOException ex) {
@@ -51,10 +50,12 @@ public class Communicator {
     
     public String readResponse(){
         try {
-            size = in.readInt();
+            in = new DataInputStream(serverConnection.getInputStream());
+            //size = in.readInt();
             byte[] request_bytes = new byte[size];
             in.read(request_bytes);
             String response = new String(request_bytes);
+            System.out.println(response);
             return response;
         } catch (IOException ex) {
             Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);

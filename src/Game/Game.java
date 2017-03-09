@@ -6,9 +6,12 @@
 package Game;
 
 import Graphics.FlappyMario;
+import static Graphics.FlappyMario.players;
 import Models.Player;
 import Network.Communicator;
 import Network.RequestParser;
+import Network.SendRequest;
+import Types.Request;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -18,7 +21,7 @@ import javax.swing.JOptionPane;
  * @author DanielAlejandro
  */
 public class Game {
-
+    
     /**
      * @param args the command line arguments
      */
@@ -37,14 +40,13 @@ public class Game {
         System.out.println("C: "+join);
         String response = comms.readResponse();
         System.out.println("S: "+response);
+        comms.closeCommunication();
         
         RequestParser requestParser = new RequestParser(separator);
-        
-        //Player with MatchId and PlayerId
-        Player player = new Player(requestParser.getMatchId(response), requestParser.getPlayerId(response), requestParser.getColor(response));
+        requestParser.parse(response);
         
         FlappyMario flappyMario = null;
-        flappyMario.flappyMario = new FlappyMario(player);
+        flappyMario.flappyMario = new FlappyMario();
     }
     
 }

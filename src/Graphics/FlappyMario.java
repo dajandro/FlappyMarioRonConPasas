@@ -43,12 +43,10 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     private int HighScore;
     private int x;
     private int previousx;
-    private Player player;
-    
+    public static ArrayList<Player> players;
 
-    public FlappyMario(Player player)
-    {
-        this.player = player;
+    public FlappyMario()
+    {   
         JFrame jframe = new JFrame();
         timer = new Timer(20, this);
         chrono = new Chronometer();
@@ -69,7 +67,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         jframe.setResizable(false);
         jframe.setVisible(true);
 
-        marioColor = player.getColor();
+        marioColor = players.get(0).getColor();
         mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
         columns = new ArrayList<Rectangle>();
 
@@ -112,7 +110,8 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
             columns.clear();
             yMotion = 0;
-            score = 0;           
+            score = 0;        
+            players.get(0).setScore(score);
 
             addColumn(true);
             addColumn(true);
@@ -176,8 +175,10 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             // Score
             for (Rectangle column : columns)
             {
-                if (column.y == 0 && mario.x + mario.width / 2 > column.x + column.width / 2 - 10 && mario.x + mario.width / 2 < column.x + column.width / 2 + 10)
+                if (column.y == 0 && mario.x + mario.width / 2 > column.x + column.width / 2 - 10 && mario.x + mario.width / 2 < column.x + column.width / 2 + 10){
                     score++;
+                    players.get(0).setScore(score);
+                }
                 if (column.intersects(mario))
                 {
                     loose = true;
@@ -208,6 +209,12 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         }
         
         renderer.repaint();
+        
+        this.players.get(0).setX(this.x);
+        this.players.get(0).setY(mario.y);
+        SendRequest sedRequest = new SendRequest(Request.ACTION, this.players.get(0));
+        Thread th = new Thread(sedRequest);
+        th.start();
     }
     
     public void repaint(Graphics g)
@@ -264,8 +271,8 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             g.drawString("Game over!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
             timer.stop();
             
-            this.player.setScore(this.HighScore);
-            SendRequest sedRequest = new SendRequest(Request.END, this.player);
+            this.players.get(0).setScore(this.HighScore);
+            SendRequest sedRequest = new SendRequest(Request.END, this.players.get(0));
             Thread th = new Thread(sedRequest);
             th.start();
         }
@@ -285,10 +292,15 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         {
             // Sccore
             g.drawString(String.valueOf(score/3), WIDTH / 2 - 25, 100);
-            // Progress bar
-            g.setColor(Color.red);
             int x_pb = ((WIDTH - 10) / MAX_SCORE);
-            g.fillRect((score/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 22, mario.width, mario.height);
+            // Progress bar
+            int offset_y = 0;
+            for(Player player : players){
+                g.setColor(player.getColor());                
+                g.fillRect((player.getScore()/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 22 + offset_y, mario.width, mario.height);
+                offset_y -= mario.height - 5;
+                System.out.println(player.toString());
+            }
         }
     }    
     
