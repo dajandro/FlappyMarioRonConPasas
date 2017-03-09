@@ -30,7 +30,7 @@ import javax.swing.Timer;
 public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
     public static FlappyMario flappyMario;
-    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 0, PLAY_TIME_S = 10;
+    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
     public Render renderer;
     public Rectangle mario;
     public Color marioColor;
@@ -277,7 +277,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         for(Rectangle bird : birds){
             if((bird.x >= (this.x - WIDTH/2) && bird.x <= (this.x + WIDTH/2))){
                 g.setColor(birdsColor.get(birds.indexOf(bird)));
-                g.fillRect(bird.x, bird.y, bird.width, bird.height);
+                g.fillRect(mario.x, bird.y, bird.width, bird.height);
             }
         }
         
