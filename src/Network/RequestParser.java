@@ -35,7 +35,6 @@ public class RequestParser {
             Color color = colors.get(Integer.parseInt(package_parts[i]));
             int id = Integer.parseInt(package_parts[i]);
             players.add(new Player(0, id, color));
-            System.out.println(players.get(i - 1).toString());
         }
     }
     

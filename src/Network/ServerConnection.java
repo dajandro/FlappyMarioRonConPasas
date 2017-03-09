@@ -26,7 +26,7 @@ public class ServerConnection {
         this.port = port;
         
     }
-
+ 
     public String getServerName() {
         return serverName;
     }

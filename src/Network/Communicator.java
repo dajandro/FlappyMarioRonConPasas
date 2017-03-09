@@ -26,7 +26,7 @@ public class Communicator {
     PrintWriter _out;
 
     public Communicator() {
-        serverConnection = new ServerConnection("172.20.2.149", 5555);        
+        serverConnection = new ServerConnection("localhost", 5555);        
     }
     
     public void initiateCommunication(){
@@ -55,7 +55,6 @@ public class Communicator {
             byte[] request_bytes = new byte[size];
             in.read(request_bytes);
             String response = new String(request_bytes);
-            System.out.println(response);
             return response;
         } catch (IOException ex) {
             Logger.getLogger(Communicator.class.getName()).log(Level.SEVERE, null, ex);

@@ -35,6 +35,8 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     public Rectangle mario;
     public Color marioColor;
     public ArrayList<Rectangle> columns;
+    public ArrayList<Rectangle> birds;
+    public ArrayList<Color> birdsColor;
     public int ticks, yMotion, score;
     public boolean loose, started, gameover;
     public Random rand;
@@ -69,8 +71,10 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
 
         marioColor = players.get(0).getColor();
         mario = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 - 100, 20, 20);
-        columns = new ArrayList<Rectangle>();
-
+        columns = new ArrayList<>();
+        birds = new ArrayList<>();
+        birdsColor = new ArrayList<>();
+        
         addColumn(true);
         addColumn(true);
         addColumn(true);
@@ -194,6 +198,18 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
                 }
             }
             
+            Player currentPlayer = players.get(0);
+            birds.clear();
+            birdsColor.clear();
+            for(Player player : players){
+                if(currentPlayer.getPlayerId() != player.getPlayerId()){
+                    if((player.getX() >= (this.x - WIDTH/2) || player.getX() <= (this.x + WIDTH/2))){
+                        birds.add(new Rectangle(player.getX(), player.getY(), mario.width, mario.height));
+                        birdsColor.add(player.getColor());
+                    }
+                }
+            }
+        
             // Validaciones
             if (mario.y > HEIGHT - 120 - PROGRESSBAR_HEIGHT || mario.y < 0)
                 loose = true;
@@ -255,19 +271,29 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         //HighScore
         g.drawString("HighScore: " + this.HighScore , 500, 50);
         
-        //HighScore
-        g.drawString("X: " + this.x , 100, 50);
-        
         g.setFont(new Font("Arial", 1, 100));
-
-        if (!started)
+        
+        for(Rectangle bird : birds){
+            System.out.println("This X: " + this.x + " Other X: " + bird.x);
+            System.out.println((bird.x >= (this.x - WIDTH/2) || bird.x <= (this.x + WIDTH/2)));
+            
+            if((bird.x >= (this.x - WIDTH/2) && bird.x <= (this.x + WIDTH/2))){
+                g.setColor(birdsColor.get(birds.indexOf(bird)));
+                g.fillRect(bird.x, bird.y, bird.width, bird.height);
+            }
+        }
+        
+        if (!started){
+            g.setColor(Color.white);
             g.drawString("Click to start!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
+        }
         
         if (gameover)
         {
             if(this.HighScore < this.score / 3)
                 this.HighScore = this.score / 3;
             
+            g.setColor(Color.white);
             g.drawString("Game over!", 75, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
             timer.stop();
             
@@ -284,22 +310,21 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             
             this.x = 0;
             
+            g.setColor(Color.white);
             g.drawString("Ouch!", 250, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
             g.drawString("Click to restart", 30, HEIGHT / 2 + 50 - PROGRESSBAR_HEIGHT);            
         }
 
         if (!gameover && !loose && started)
         {
-            // Sccore
+            // Score
+            g.setColor(Color.white);
             g.drawString(String.valueOf(score/3), WIDTH / 2 - 25, 100);
             int x_pb = ((WIDTH - 10) / MAX_SCORE);
             // Progress bar
-            int offset_y = 0;
             for(Player player : players){
                 g.setColor(player.getColor());                
-                g.fillRect((player.getScore()/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 22 + offset_y, mario.width, mario.height);
-                offset_y -= mario.height - 5;
-                System.out.println(player.toString());
+                g.fillRect((player.getScore()/3) * x_pb, HEIGHT - PROGRESSBAR_HEIGHT + 22, mario.width, mario.height);
             }
         }
     }    
