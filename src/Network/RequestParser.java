@@ -31,10 +31,11 @@ public class RequestParser {
         request = request.trim();
         String[] package_parts = request.split(this.separator);
         players = new ArrayList<>();
-        for(int i = 1; i < package_parts.length; i++){
+        int MatchId = Integer.parseInt(package_parts[1]);
+        for(int i = 2; i < package_parts.length; i++){
             Color color = colors.get(Integer.parseInt(package_parts[i]));
             int id = Integer.parseInt(package_parts[i]);
-            players.add(new Player(0, id, color));
+            players.add(new Player(MatchId, id, color));
         }
     }
     
