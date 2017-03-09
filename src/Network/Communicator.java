@@ -21,12 +21,12 @@ public class Communicator {
     private ServerConnection serverConnection;
     private DataOutputStream out;
     private DataInputStream in;
-    private int size = 1000;
+    private int size = 5000;
     BufferedReader _in;
     PrintWriter _out;
 
     public Communicator() {
-        serverConnection = new ServerConnection("localhost", 5555);        
+        serverConnection = new ServerConnection("172.20.2.149", 5555);        
     }
     
     public void initiateCommunication(){
