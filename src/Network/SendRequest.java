@@ -5,10 +5,14 @@
  */
 package Network;
 
+import Game.GameStart;
 import static Graphics.FlappyMario.players;
 import Models.Player;
 import Types.Request;
+import java.awt.Label;
 import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -98,7 +102,29 @@ public class SendRequest implements Runnable{
             message += separator + player.getScore();
             
             communicator.sendMessage(message);
+            System.out.println("C: " + message);
             response = communicator.readResponse();
+            System.out.println("S: " + response);
+            
+            String HighScores = new String();
+            response = response.trim();
+            String[] package_parts = response.split("~");
+            for(int i=1; i < package_parts.length;){
+                String name = package_parts[i];
+                String score = package_parts[i + 1];
+                HighScores += name + ": " + score + "\n";
+                i += 2;
+            }
+            
+            JOptionPane.showMessageDialog(null, HighScores,"HighScores", JOptionPane.INFORMATION_MESSAGE);
+            int r = JOptionPane.CLOSED_OPTION;
+            while(r == JOptionPane.CLOSED_OPTION)
+                r = JOptionPane.showConfirmDialog(null, "New Game?", "Flappy Mario Ron con Pasas", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            
+            if(r == JOptionPane.YES_OPTION){
+                GameStart s = new GameStart();
+                s.Start();
+            }
         }
         
         this.communicator.closeCommunication();

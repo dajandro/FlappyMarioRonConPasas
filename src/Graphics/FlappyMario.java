@@ -30,7 +30,7 @@ import javax.swing.Timer;
 public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     
     public static FlappyMario flappyMario;
-    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 1, PLAY_TIME_S = 0;
+    public final int WIDTH = 800, HEIGHT = 900, PROGRESSBAR_HEIGHT = 100, MAX_SCORE = 50, PLAY_TIME_M = 0, PLAY_TIME_S = 10;
     public Render renderer;
     public Rectangle mario;
     public Color marioColor;
@@ -46,10 +46,11 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
     private int x;
     private int previousx;
     public static ArrayList<Player> players;
+    private JFrame jframe;
 
     public FlappyMario()
     {   
-        JFrame jframe = new JFrame();
+        jframe = new JFrame();
         timer = new Timer(20, this);
         chrono = new Chronometer();
         chrono.setMinutes(PLAY_TIME_M);
@@ -203,7 +204,7 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             birdsColor.clear();
             for(Player player : players){
                 if(currentPlayer.getPlayerId() != player.getPlayerId()){
-                    if((player.getX() >= (this.x - WIDTH/2) || player.getX() <= (this.x + WIDTH/2))){
+                    if((player.getX() >= (this.x - WIDTH/2) && player.getX() <= (this.x + WIDTH/2))){
                         birds.add(new Rectangle(player.getX(), player.getY(), mario.width, mario.height));
                         birdsColor.add(player.getColor());
                     }
@@ -274,9 +275,6 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
         g.setFont(new Font("Arial", 1, 100));
         
         for(Rectangle bird : birds){
-            System.out.println("This X: " + this.x + " Other X: " + bird.x);
-            System.out.println((bird.x >= (this.x - WIDTH/2) || bird.x <= (this.x + WIDTH/2)));
-            
             if((bird.x >= (this.x - WIDTH/2) && bird.x <= (this.x + WIDTH/2))){
                 g.setColor(birdsColor.get(birds.indexOf(bird)));
                 g.fillRect(bird.x, bird.y, bird.width, bird.height);
@@ -301,6 +299,8 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             SendRequest sedRequest = new SendRequest(Request.END, this.players.get(0));
             Thread th = new Thread(sedRequest);
             th.start();
+            
+            this.jframe.dispose();
         }
 
         if (loose && !gameover)
@@ -312,7 +312,9 @@ public class FlappyMario implements ActionListener, MouseListener, KeyListener {
             
             g.setColor(Color.white);
             g.drawString("Ouch!", 250, HEIGHT / 2 - 50 - PROGRESSBAR_HEIGHT);
-            g.drawString("Click to restart", 30, HEIGHT / 2 + 50 - PROGRESSBAR_HEIGHT);            
+            g.drawString("Click to restart", 30, HEIGHT / 2 + 50 - PROGRESSBAR_HEIGHT);
+            g.setFont(new Font("Arial", 1, 40));
+            g.drawString("HighScore: " + this.HighScore , 500, 50);            
         }
 
         if (!gameover && !loose && started)
