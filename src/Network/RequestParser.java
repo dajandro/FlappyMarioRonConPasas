@@ -5,6 +5,8 @@
  */
 package Network;
 
+import static Graphics.FlappyMario.players;
+import Models.Player;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -25,11 +27,27 @@ public class RequestParser {
         this.colors.add(Color.pink);
         this.colors.add(Color.white);
     }
+    public void parse(String request){
+        request = request.trim();
+        String[] package_parts = request.split(this.separator);
+        players = new ArrayList<>();
+        for(int i = 1; i < package_parts.length; i++){
+            Color color = colors.get(Integer.parseInt(package_parts[i]));
+            int id = Integer.parseInt(package_parts[i]);
+            players.add(new Player(0, id, color));
+            System.out.println(players.get(i - 1).toString());
+        }
+    }
     
     public Color getColor(String request){
+        System.out.println(this.colors.toString());
         if (request.startsWith("001")){
             String[] package_parts = request.split(this.separator);
-            return this.colors.get(Integer.valueOf(package_parts[package_parts.length-1]));
+            switch(package_parts[package_parts.length - 1]){
+                case "0": return this.colors.get(0);
+                case "1": return this.colors.get(1);
+                case "2": return this.colors.get(2);
+            }
         }
         return null;
     }
@@ -51,9 +69,4 @@ public class RequestParser {
         
         return 0;
     }
-    
-    public String parse(String request){
-        return "";
-    }
-    
 }
